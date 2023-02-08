@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>On Site Booking</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+
+           $(document).ready(function(){
+                const params = new URLSearchParams(window.location.search)
+                var givenName = params.get('userGivenName');
+                var familyName = params.get('userFamilyName');
+                var id = params.get('userid');
+
+                console.log(givenName)
+                console.log(familyName)
+                console.log(id)
+
+                  $("#adminName").text("Admin Name: " + givenName + " " + familyName);
+                  $("#adminID").text("Admin ID: " + id);
+
+                $("#routetab").click(function(){
+                    window.location.href = 'adminOnSiteBookingModification.html?userid=' + id + "&userGivenName=" + givenName + "&userFamilyName=" + familyName
+                         + "&clientID=" + clientID + "&clientGivenName=" + clientGivenName + "&clientFamilyName=" + clientFamilyName
+                         + "&clientPhoneNumber=" + clientPhoneNumber;
+                });
+
+                $("#bookDelete").click(function(){
+                    console.log('adminOnSiteBookingDelete.html?userid=' + id + "&userGivenName=" + givenName + "&userFamilyName=" + familyName)
+                    window.location.href = 'adminOnSiteBookingDelete.html?userid=' + id + "&userGivenName=" + givenName + "&userFamilyName=" + familyName;
+                });
+
+                $("#phoneCall").click(function(){
+                    window.location.href = 'adminPhoneCallValid.html?userid=' + id + "&userGivenName=" + givenName + "&userFamilyName=" + familyName;
+                });
+
+
+                   $.ajax({
+                         url:'http://localhost:8080/testing-site/facilityController',
+
+                         method:'GET',
+                         crossDomain: true,
+
+                         "headers": {
+                            "accept": "application/json",
+                             "Access-Control-Allow-Origin":"*"
+                         },
+                         success: function(result) {
+                                for (let i = 0; i < result.length; i++) {
+                                    if (result[i].description != null) {
+                                        $('#CurrentTestingSitesTable').append("<tr>\
+                                        <td>"+result[i].id+"</td>\
+										<td>"+result[i].name+"</td>\
+										</tr>");
+                                    }
+                                }
+
+                         },
+                         error: function(jqXHR, textStatus, errorMessage) {
+                            console.log("table page failed")
+                          }
+
+                    });
+
+                $("#pincode").click(function(){
+                    var clientGivenName = $("#givenName").val().trim();
+                    var clientFamilyName = $("#familyName").val().trim();
+                    var clientPhoneNumber = $("#phoneNumber").val().trim();
+                    var clientID = $("#clientID").val().trim();
+                    var testingsiteID = $("#testingsiteID").val().trim();
+                    var date = $("#date").val().trim();
+                    var time = $("#time").val().trim();
+                    console.log(clientID);
+                    console.log(testingsiteID);
+                    console.log(date);
+                    console.log(time);
+                    $.ajax({
+                         url:'http://localhost:8080/booking/onsite/bookingController/'+clientID+'/'+testingsiteID+'/'+date+'/'+time,
+
+                         method:'POST',
+                         crossDomain: true,
+                         dataType: 'json',
+
+                         "headers": {
+                            "accept": "application/json",
+                             "Access-Control-Allow-Origin":"*"
+                         },
+                         success: function(result) {
+                                alert("pin code successful: " + result.notes);
+                         },
+                         error: function(jqXHR, textStatus, errorMessage) {
+                            console.log("on site booking failed")
+                            console.log(textStatus)
+                            alert("Error: Invalid input")
+                          }
+
+                      });
+                });
+
+            });
+
+        </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.css' rel='stylesheet'>
+</head>
+
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-tabs">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <!-- Page Title -->
+                <span class="mdl-layout-title">On Site Booking</span>
+            </div>
+            <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+                <a id ="main" href="./adminOnSiteBooking.html" class="mdl-layout__tab is-active">On Site Booking</a>
+                <a  id ="routetab" href="./adminOnSiteBookingModification.html" class="mdl-layout__tab">On Site Booking Modification</a>
+                <a  id ="bookDelete" href="./adminOnSiteBookingDelete.html" class="mdl-layout__tab">On Site Booking Delete</a>
+                <a  id ="phoneCall" href="./adminPhoneCallValid.html" class="mdl-layout__tab">Phone Call Modification</a>
+            </div>
+        </header>
+
+        <h1>On Site booking</h1>
+
+        <div>
+            <h4 id="adminName">Admin Name: GivenName then FamilyName</h4>
+            <h4 id="adminID">Admin ID: admin id</h4>
+
+            <div id="userForm">
+                <h4>Client registration for on site booking</h4>
+                <label><b>Given Name</b></label>
+                <input type="text" placeholder="Enter given name" name="user" id="givenName" required><br/>
+                <label><b>Family Name</b></label>
+                <input type="text" placeholder="Enter family name" name="user" id="familyName" required><br/>
+                <label><b>Phone number</b></label>
+                <input type="text" placeholder="Enter phone number" name="user" id="phoneNumber" required><br/>
+                <label><b>Client ID</b></label>
+                <input type="text" placeholder="Enter Client ID" name="user" id="clientID" required><br/>
+                <label><b>Testing Site ID</b></label>
+                <input type="text" placeholder="Enter Testing Site ID" name="user" id="testingsiteID" required><br/>
+                <b> Date of Booking </b>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input type="date" id="date" name="user">
+                </div>
+                <br>
+                <b> Time of Booking </b>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+
+                    <input type="time" id="time" name="user">
+                </div>
+                <br>
+            </div>
+            <button id="pincode" type="submit">Generate Pin code</button>
+
+            <div id="msg"></div>
+            <div>
+                <h4>On Site Testing Sites</h4>
+                <table id="table" border="1">
+                    <tr>
+                        <th>On Site Testing ID</th>
+                        <th>On Site Testing Name</th>
+                    </tr>
+                    <tbody id="CurrentTestingSitesTable">
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+</body>
+</html>

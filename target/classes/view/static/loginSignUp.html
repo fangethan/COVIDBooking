@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome Page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<script type="text/javascript">
+<!--  document ready is used to make functions available after the document is loaded -->
+<!-- A $ sign to define/access jQuery-->
+<!--A (selector) to "query (or find)" HTML elements-->
+<!--A jQuery action() to be performed on the element(s)-->
+
+            $(document).ready(function(){
+
+                $("#login_submit").click(function(){
+                    var username = $("#username").val().trim();
+                    var password = $("#password").val().trim();
+
+                    var jwt = ($('input[name=jwtValue]:checked', '#myForm').val());
+                    var userInfo = ($('input[name=userType]:checked', '#userForm').val());
+
+                    if( username != "" && password != "" ){
+<!--                    AJAX is about loading data in the background and display it on the webpage, without reloading the whole page.-->
+<!--                        url is where the request is sent-->
+<!--                        they parse a json object-->
+<!--                        method is what type of HTTP method used-->
+<!--                        cross domain is set to true because we are making a same domain json request and your site may redirect the request to-->
+<!--                        another domain to sere the response-->
+<!--                        header saying we accept json type-->
+
+                        $.ajax({
+                            url:'http://localhost:8080/users/loginController/' + username + '/' + password + '/' + jwt + '/' + userInfo,
+
+                            method:'POST',
+                            crossDomain: true,
+
+                               "headers": {
+                                     "accept": "application/json",
+                                        "Access-Control-Allow-Origin":"*"
+                                         },
+                            success: function(data) {
+                            console.log("success is:", data);
+
+                              var userid = data.id;
+                              console.log(userid);
+
+                              var userGivenName = data.givenName;
+                              console.log(userGivenName);
+
+                              var userFamilyName = data.familyName;
+                              console.log(userFamilyName);
+
+                              var userPhone = data.phoneNumber;
+                              console.log(userPhone);
+
+                             var isCustomer = data.isCustomer;
+                             console.log("data is a customer or not: " + isCustomer);
+
+<!--						    $("#msg").html( "<span style='color: green'>Company added successfully</span>" );-->
+
+                             console.log(userInfo);
+                             if (userInfo == "null") {
+                                 alert("failure: click on a user type please");
+                             } else if (userInfo == "customer" && isCustomer == "true") {
+                                window.location.href = 'CustomerUI.html?userid=' + userid + "&userGivenName=" + userGivenName +
+                                "&userFamilyName=" + userFamilyName;
+                             } else if (userInfo == "receptionist" && isCustomer == "false"){
+                                window.location.href = 'adminOnSiteBooking.html?userid=' + userid + "&userGivenName=" + userGivenName +
+                                "&userFamilyName=" + userFamilyName;
+                             } else if (userInfo == "hcw" && isCustomer == "false"){
+                                window.location.href = 'adminOnSiteTesting.html?userid=' + userid + "&userGivenName=" + userGivenName +
+                                "&userFamilyName=" + userFamilyName;
+                             } else if (data.isCustomer == "null"){
+                               alert("failure: user cannot be this type of user");
+                             }
+
+					        },
+					    error: function(jqXHR, textStatus, errorMessage) {
+					    alert("failure:" + textStatus + errorMessage);
+						    $("#msg").html( "<span style='color: red'>Name is required</span>" );
+					    }
+                        });
+
+
+                    }
+                });
+
+            });
+        </script>
+<body>
+    <div class="container">
+        <label><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" name="username" id="username" required>
+
+        <label><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+        <div id="myForm">
+            <label>Select if you have a jwt token or not</label> <br/>
+            <input type="radio" name="jwtValue" value="true" /> Yes <br />
+            <input type="radio" name="jwtValue" value="false" /> No <br />
+        </div>
+
+        <div id="userForm">
+            <label>Select what type of user you are</label> <br/>
+            <input type="radio" name="userType" value="customer" /> Customer <br />
+            <input type="radio" name="userType" value="receptionist" /> Receptionist <br />
+            <input type="radio" name="userType" value="hcw" /> Health Care Worker <br />
+        </div>
+
+
+
+<!--        <button type="submit">Sign Up</button>-->
+        <button type="submit" id="login_submit">Login</button>
+        <div id='msg'/>
+    </div>
+</body>
+</html>

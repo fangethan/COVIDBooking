@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>On Site Testing</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+     $(document).ready(function(){
+                const params = new URLSearchParams(window.location.search);
+                var givenName = params.get('userGivenName');
+                var familyName = params.get('userFamilyName');
+                var id = params.get('userid');
+
+                 $("#adminName").text("Admin Name: " + givenName + " " + familyName);
+                 $("#adminID").text("Admin ID: " + id);
+
+
+                $.ajax({
+                         url:'http://localhost:8080/booking/bookingController',
+
+                         method:'GET',
+                         crossDomain: true,
+
+                         "headers": {
+                            "accept": "application/json",
+                             "Access-Control-Allow-Origin":"*"
+                         },
+                         success: function(result) {
+                                for (let i = 0; i < result.length; i++) {
+                                    $('#CurrentBookingsTable').append("<tr>\
+                                        <td>"+result[i].id+"</td>\
+										<td>"+result[i].customer.id+"</td>\
+										<td>"+result[i].customer.givenName+"</td>\
+										<td>"+result[i].customer.familyName+"</td>\
+										<td>"+result[i].customer.phoneNumber+"</td>\
+										<td>"+ result[i].notes+ "</td>\
+										<td>"+ result[i].startTime+ "</td>\
+										</tr>");
+
+                                }
+
+                         },
+                         error: function(jqXHR, textStatus, errorMessage) {
+                            console.log("table page failed")
+                          }
+
+                });
+
+
+                $("#login_submit").click(function(){
+
+                    var testCOVIDValue = ($('input[name=testValue]:checked', '#myForm').val());
+                    var clientID = document.getElementById("clientID").value;
+                    var bookingID = document.getElementById("bookingID").value;
+
+                    if (testCOVIDValue == undefined) {
+                       $("#msg").text("COVID Test is " + testCOVIDValue + ". Try again please")
+
+                    }   else {
+                         $.ajax({
+                                 url:'http://localhost:8080/testing-site/onsiteTestController/' + testCOVIDValue + '/' + clientID + '/' + id + '/' + bookingID,
+
+                                 method:'POST',
+                                 crossDomain: true,
+
+                                 "headers": {
+                                    "accept": "application/json",
+                                     "Access-Control-Allow-Origin":"*"
+                                 },
+                                 success: function(result) {
+                                    alert("creation of covid test successful. You need to receive: " + result.type)
+                                    console.log(result.patient.givenName)
+                                    $("#msg").text("You need a " + result.type)
+                                 },
+                                 error: function(jqXHR, textStatus, errorMessage) {
+                                    console.log("title page failed")
+                                  }
+
+                              });
+                    }
+
+
+
+                });
+
+            });
+
+        </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.css' rel='stylesheet'>
+</head>
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-tabs">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+            <!-- Page Title -->
+            <span class="mdl-layout-title">On Site Testing</span>
+        </div>
+<!--        <div class="mdl-layout__tab-bar mdl-js-ripple-effect">-->
+<!--            <a id = 'main'  class="mdl-layout__tab">On Site Booking</a>-->
+<!--            <a  id = 'routetab'  class="mdl-layout__tab is-active">On Site Testing</a>-->
+<!--        </div>-->
+    </header>
+
+    <div>
+        <h4 id="adminName">Admin Name: GivenName then FamilyName</h4>
+        <h4 id="adminID">Admin ID: admin id</h4>
+
+        <div id="clientDetails">
+            <h3>Client Form</h3>
+            <label>Enter client id</label> <br/>
+            <input type="text" id="clientID"/><br/>
+
+            <label>Enter client given name</label> <br/>
+            <input type="text" id="clientGivenName"/><br/>
+
+            <label>Enter client family name</label> <br/>
+            <input type="text" id="clientFamilyName"/><br/>
+
+            <label>Enter client Phone Number</label> <br/>
+            <input type="text" id="clientPhoneNumber"/><br/>
+
+            <label>Enter client pin</label> <br/>
+            <input type="text" id="clientPin"/><br/>
+
+            <label>Enter Booking id</label> <br/>
+            <input type="text" id="bookingID"/><br/>
+        </div>
+
+        <div id="myForm">
+            <label><b>Symptoms of user</b></label>
+            <label>Select what symptom you may have</label> <br/>
+            <input type="radio" name="testValue" value="2" /> Mild <br />
+            <input type="radio" name="testValue" value="3" /> Severe <br />
+            <input type="radio" name="testValue" value="1" /> None or close contact <br />
+        </div>
+        <button id="login_submit" type="submit">Submit</button>
+        <div id="msg"></div>
+    </div>
+            <h4>Bookings</h4>
+            <table id="table" border="1">
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Client ID</th>
+                    <th>Client Given Name</th>
+                    <th>Client Family Name</th>
+                    <th>Client Phone number</th>
+                    <th>Client Pin Code</th>
+                    <th>Client Booking Time</th>
+                </tr>
+                <tbody id="CurrentBookingsTable">
+
+                </tbody>
+            </table>
+
+</div>
+
+
+
+</body>
+</html>

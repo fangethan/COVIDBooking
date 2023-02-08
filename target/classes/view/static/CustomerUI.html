@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Search</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.css' rel='stylesheet'>
+    <script type="text/javascript" src="http://www.datejs.com/build/date.js"></script>
+    <style>
+        .button {
+          background-color: #4CAF50; /* Green */
+
+          color: white;
+          margin-left: 250px;
+          margin-top: 100px;
+
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+
+        }
+        .searchbar{
+          margin-left: 500px;
+          margin-top: 100px;
+         }
+         .dropDown{
+         margin-left: 50px;
+          margin-top: 100px;
+         }
+        .label{
+          margin-left: 100px;
+          margin-top: 100px;
+        }
+        .buttonSub{
+                 background-color: #4CAF50; /* Green */
+
+          color: white;
+          margin-left: 100px;
+          margin-top: 100px;
+
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+        }
+
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+
+        td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+        }
+
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
+        tr:hover {
+        background: #D3D3D3;
+        }
+        td a {
+           display: block;
+           border: 1px solid black;
+           padding: 16px;
+        }
+        .myimgdivshowhide{
+        	display:none;
+            }
+
+        .myimgdivshowhide2{
+        	display:none;
+            }
+
+
+    </style>
+
+    <script type="text/javascript">
+          $(document).ready(function(){
+                //Seaching tab
+                 var BookingID;
+                $.ajax({
+                            url:'http://localhost:8080/testing-site/facilityController',
+                            method:'GET',
+                            crossDomain: true,
+
+                               "headers": {
+                                     "accept": "application/json",
+                                        "Access-Control-Allow-Origin":"*"
+                                         },
+                            success: function(result) {
+                            $('#Fac').empty();
+                             for (let i = 0; i < result.length; i++) {
+                               $('#Fac').append("<tr>\
+										<td>"+result[i].name+"</td>\
+										<td>"+result[i].phoneNumber+"</td>\
+										<td>"+result[i].description+"</td>\
+										<td>"+result[i].address.unitNumber +" " +result[i].address.street+ " " +result[i].address.suburb + " " + result[i].address.state + " " + result[i].address.postcode+ "</td>\
+										</tr>");
+                                }
+                       },
+                   error: function(jqXHR, textStatus, errorMessage) {
+                   alert("failure:" + textStatus + errorMessage);
+                      $("#msg").html( "<span style='color: red'>Name is required</span>" );
+                   }
+                     });
+
+            $("#searchtab").click(function(){
+
+                     $.ajax({
+                            url:'http://localhost:8080/testing-site/facilityController',
+                            method:'GET',
+                            crossDomain: true,
+
+                               "headers": {
+                                     "accept": "application/json",
+                                        "Access-Control-Allow-Origin":"*"
+                                         },
+                            success: function(result) {
+                            $('#Fac').empty();
+                             for (let i = 0; i < result.length; i++) {
+                               $('#Fac').append("<tr>\
+										<td>"+result[i].name+"</td>\
+										<td>"+result[i].phoneNumber+"</td>\
+										<td>"+result[i].description+"</td>\
+										<td>"+result[i].address.unitNumber +" " +result[i].address.street+ " " +result[i].address.suburb + " " + result[i].address.state + " " + result[i].address.postcode+ "</td>\
+										</tr>");
+                                }
+                       },
+                   error: function(jqXHR, textStatus, errorMessage) {
+                   alert("failure:" + textStatus + errorMessage);
+                      $("#msg").html( "<span style='color: red'>Name is required</span>" );
+                   }
+                     });
+                });
+
+
+            $("#dropDownFacilitiy").click(function(){
+
+                    var typeFacility = $("#facilitytype").val().trim();
+                    console.log(typeFacility);
+                     $.ajax({
+                            url:'http://localhost:8080/testing-site/facilityController',
+                            method:'GET',
+                            crossDomain: true,
+
+                               "headers": {
+                                     "accept": "application/json",
+                                        "Access-Control-Allow-Origin":"*"
+                                         },
+                            success: function(result) {
+                            $('#Fac').empty();
+                             for (let i = 0; i < result.length; i++) {
+                             console.log(result[i].address.additionalInfo.id);
+                               if( String(typeFacility) == String(result[i].address.additionalInfo.id) ){
+
+                                    $('#Fac').append("<tr>\
+										<td>"+result[i].name+"</td>\
+										<td>"+result[i].phoneNumber+"</td>\
+										<td>"+result[i].description+"</td>\
+										<td>"+result[i].address.unitNumber +" " +result[i].address.street+ " " +result[i].address.suburb + " " + result[i].address.state + " " + result[i].address.postcode+ "</td>\
+										</tr>");
+                                }
+                                }
+                       },
+                   error: function(jqXHR, textStatus, errorMessage) {
+                   alert("failure:" + textStatus + errorMessage);
+                      $("#msg").html( "<span style='color: red'>Name is required</span>" );
+                   }
+                     });
+                });
+
+
+                $("#SuburbSearch").click(function(){
+                    var suburb = $("#SearchBar").val().trim();
+
+                     $.ajax({
+                            url:'http://localhost:8080/testing-site/facilityController',
+                            method:'GET',
+                            crossDomain: true,
+
+                               "headers": {
+                                     "accept": "application/json",
+                                        "Access-Control-Allow-Origin":"*"
+                                         },
+                            success: function(result) {
+                               $('#Fac').empty();
+                             for (let i = 0; i < result.length; i++) {
+                               if( String(suburb) == result[i].address.suburb ){
+
+                                    $('#Fac').append("<tr>\
+										<td>"+result[i].name+"</td>\
+										<td>"+result[i].phoneNumber+"</td>\
+										<td>"+result[i].description+"</td>\
+										<td>"+result[i].address.unitNumber +" " +result[i].address.street+ " " +result[i].address.suburb + " " + result[i].address.state + " " + result[i].address.postcode+ "</td>\
+										</tr>");
+                                }
+                               }
+                       },
+                   error: function(jqXHR, textStatus, errorMessage) {
+                   alert("failure:" + textStatus + errorMessage);
+                      $("#msg").html( "<span style='color: red'>Name is required</span>" );
+                   }
+                     });
+                });
+
+
+
+                //Home Booking Section___________________________________________________
+                var locationID;
+                $("#Homebookingbutton").click(function(){
+                  const params = new URLSearchParams(window.location.search)
+
+                    var id = params.get('userid');
+                    var Kit = $("#KitBought").val().trim();
+                    var Site = $("#SiteName").val().trim();
+                    var date = $("#date_input").val().trim();
+                    var time = $("#time_input").val().trim();
+                    console.log(date);
+                    console.log(time);
+                    if (Kit == "Yes") {
+                        alert("No Need to go to Hospital");
+                        }
+                        else{ alert("Go to the Site to pickup rat Test");}
+
+
+
+                     $.ajax({
+                        url:'http://localhost:8080/testing-site/facilityController',
+                        method:'GET',
+                        crossDomain: true,
+                        async: false,
+
+                        "headers": {
+                        "accept": "application/json",
+                        "Access-Control-Allow-Origin":"*"
+                                                       },
+
+                          success: function(result) {
+
+                                      for (let i = 0; i < result.length; i++) {
+
+                                             if( String(Site) == result[i].name){
+                                                    console.log(result[i].name);
+                                                    locationID = result[i].id;
+                                                    console.log("From :" + locationID);
+
+                                              }
+                                             }
+                                     },
+                           error: function(jqXHR, textStatus, errorMessage) {
+                         alert("failure:" + textStatus + errorMessage);
+                          $("#msg").html( "<span style='color: red'>Name is required</span>" );
+                            }
+                          });
+
+
+
+                    $.ajax({
+
+                         url:'http://localhost:8080/booking/homebooking/bookingController/'+id+ '/' +locationID + '/' + date +'/' + time,
+
+                         method:'POST',
+                         crossDomain: true,
+                         async: false,
+                         dataType: 'json',
+
+                         "headers": {
+                            "accept": "application/json",
+                             "Access-Control-Allow-Origin":"*"
+                         },
+                         success: function(result) {
+                                alert("Booking success: ");
+                              var QRcode =result.additionalInfo.QRCode;
+                              var urlGen = result.additionalInfo.URL;
+
+                                $('#QR').attr('src', `data:image/png;base64,${QRcode}`);
+                              $('.myimgdivshowhide').show();
+
+                                $('#viewemyLabel').text(urlGen);
+                         },
+                         error: function(jqXHR, textStatus, errorMessage) {
+                            console.log("on site booking failed")
+                            console.log(textStatus)
+                            alert("Error: Invalid input")
+                          }
+
+                      });
+
+                     });
+
+                 //Profile___________________________________________________
+                 $("#currentSubmit").click(function(){
+                    var pinCode = $("#searchbarPin").val().trim();
+
+                     $.ajax({
+
+                            url:'http://localhost:8080/booking/bookingController',
+                            method:'GET',
+                            crossDomain: true,
+
+
+                               "headers": {
+                                     "accept": "application/json",
+                                        "Access-Control-Allow-Origin":"*"
+                                         },
+                            success: function(result) {
+                            console.log("sucesss");
+                             for (let i = 0; i < result.length; i++) {
+
+                                if( String(pinCode) == result[i].notes ){
+
+
+                                    $('#CurrentBookingsTable').append("<tr>\
+										<td>"+result[i].customer.givenName+"</td>\
+										<td>"+result[i].customer.familyName+"</td>\
+										<td>"+result[i].testingSite.name+"</td>\
+										<td>"+ result[i].status+ "</td>\
+										</tr>");
+                                }
+                               }
+                       },
+                   error: function(jqXHR, textStatus, errorMessage) {
+                   alert("failure11111:" + textStatus + errorMessage);
+                      $("#msg").html( "<span style='color: red'>Name is required</span>" );
+                   }
+                     });
+
+
+                });
+
+               $("#ProfileTab").click(function(){
+                                const params = new URLSearchParams(window.location.search)
+                                  $('.myimgdivshowhide2').hide();
+                                var id = params.get('userid');
+
+                                     $.ajax({
+
+                                            url:'http://localhost:8080/booking/bookingController',
+                                            method:'GET',
+                                            crossDomain: true,
+
+
+                                               "headers": {
+                                                     "accept": "application/json",
+                                                        "Access-Control-Allow-Origin":"*"
+                                                         },
+                                            success: function(result) {
+                                            console.log("sucesss");
+                                             $('#CurrentBookingsTable').empty();
+                                             for (let i = 0; i < result.length; i++) {
+
+                                                if( String(id) == result[i].customer.id ){
+                                                        var date = new Date(result[i].startTime);
+
+                                                           var dateFinal = date.toISOString().substring(0, 10);
+                                                           var timeFinal = date.toISOString().substring(11, 19);
+                                                           var stringBookings = dateFinal + " at " +timeFinal +  "\n"
+
+                                                    $('#CurrentBookingsTable').append("<tr>\
+                                                        <td>"+result[i].id+"</td>\
+                										<td>"+result[i].customer.givenName+"</td>\
+                										<td>"+result[i].customer.familyName+"</td>\
+                										<td>"+result[i].testingSite.name+"</td>\
+                										<td>"+stringBookings+"</td>\
+                										<td>"+ result[i].status+ "</td>\
+                										<td><button class=btnSelect>Select</button></td>\
+                										<td><button class=editbutton>Select</button></td>\
+                										</tr>");
+                                                }
+                                               }
+                                       },
+                                   error: function(jqXHR, textStatus, errorMessage) {
+                                   alert("failure11111:" + textStatus + errorMessage);
+                                      $("#msg").html( "<span style='color: red'>Name is required</span>" );
+                                   }
+                                     });
+
+
+                  });
+                   $("#CurrentBookingsTable").on('click','.btnSelect',function(){
+                     // get the current row
+                     var currentRow=$(this).closest("tr");
+                        $('#modifiedBookins').empty();
+                     var BookingID=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+
+                     $.ajax({
+
+                                url:'http://localhost:8080/booking/homeBooking/cancel/' + BookingID,
+
+                                 method:'PUT',
+                                 crossDomain: true,
+                                 dataType: 'json',
+
+                                 "headers": {
+                                    "accept": "application/json",
+                                     "Access-Control-Allow-Origin":"*"
+                                 },
+                               success: function(result) {
+                                            alert("Sucessful cancellation");
+                                            windows.location.reload();
+                                       },
+                                   error: function(jqXHR, textStatus, errorMessage) {
+                                   alert("failure11111:" + textStatus + errorMessage);
+                                      $("#msg").html( "<span style='color: red'>Name is required</span>" );
+                                   }
+                                     });
+
+
+                });
+
+
+                   $("#CurrentBookingsTable").on('click','.editbutton',function(){
+                     // get the current row
+                     var currentRow=$(this).closest("tr");
+                     $('.myimgdivshowhide2').show();
+                     BookingID=currentRow.find("td:eq(0)").text();
+
+                });
+                $("#SubmitModify").click(function(){
+                     // get the current row
+                    var dateMod = $("#datemodify").val().trim();
+                    var timeMod = $("#timeModify").val().trim();
+                    var testingsiteID = $("#SiteNameModify").val().trim();
+
+                     $.ajax({
+                         url:'http://localhost:8080/homebooking/modify/'+BookingID+'/'+testingsiteID+'/'+dateMod+'/'+timeMod,
+
+                         method:'PUT',
+                         crossDomain: true,
+                         dataType: 'json',
+                        async: false,
+                         "headers": {
+                            "accept": "application/json",
+                             "Access-Control-Allow-Origin":"*"
+                         },
+                         success: function(result) {
+                            alert("successful modification")
+
+
+                         },
+                         error: function(jqXHR, textStatus, errorMessage) {
+                            console.log("Modify Failed")
+                            console.log(textStatus)
+                            alert("Error: Invalid input")
+                          }
+
+                      });
+
+                });
+            $("#CheckPrevious").click(function(){
+                     // get the current row
+
+
+                     $.ajax({
+
+                                url:'http://localhost:8080/booking/bookingController',
+                                type:'GET',
+                                crossDomain: true,
+                                async: false,
+                              "headers": {
+                                     "accept": "application/json",
+                                        "Access-Control-Allow-Origin":"*"
+                                         },
+                               success: function(result) {
+                                            $('#modifiedBookins').empty();
+                                            for (let i = 0; i < result.length; i++) {
+                                                 var dataO = new Object();
+                                                if( BookingID == result[i].id ){
+                                                    dataO= result[i].additionalInfo.StartTime
+                                                    testingSitePrev =  result[i].additionalInfo.TestingSites
+                                                    var stringBookings = ""
+                                                        for (let j = 0; j < dataO.length; j++) {
+
+                                                           var date = new Date(dataO[j]);
+                                                           var dateFinal = date.toISOString().substring(0, 10);
+                                                           var timeFinal = date.toISOString().substring(11, 19);
+
+                                                           var testingSite = testingSitePrev[j]
+
+
+                                                                stringBookings = dateFinal + " at " +timeFinal +  "\n"
+                                                             $('#modifiedBookins').append("<tr>\
+                                                                <td>"+result[i].id+"</td>\
+                                                                <td>"+result[i].customer.givenName+"</td>\
+                                                                <td>"+result[i].customer.familyName+"</td>\
+                                                                <td>"+testingSite+"</td>\
+                                                                <td>"+stringBookings+"</td>\
+                                                                <td><button class=btnSelect>Select</button></td>\
+                                                                </tr>");
+                                                        }
+
+
+                                               }
+                                            }
+                                       },
+                                   error: function(jqXHR, textStatus, errorMessage) {
+                                   alert("failure11111:" + textStatus + errorMessage);
+
+                                      $("#msg").html( "<span style='color: red'>Name is required</span>" );
+                                   }
+                                     });
+
+
+                });
+
+                 $("#modifiedBookins").on('click','.btnSelect',function(){
+                        // get the current row
+                     var currentRow=$(this).closest("tr");
+
+                     var BookingID=currentRow.find("td:eq(0)").text();
+
+                     var testingsiteID = currentRow.find("td:eq(3)").text();
+                     var currentTimedate = currentRow.find("td:eq(4)").text();
+
+                     var dateMod =currentTimedate.substr(0, 10);
+                     var timeMod= currentTimedate.substr(14,5);
+                     console.log(timeMod);
+
+
+                     $.ajax({
+                      url:'http://localhost:8080/homebooking/modify/'+BookingID+'/'+testingsiteID+'/'+dateMod+'/'+timeMod,
+                      method:'PUT',
+                         crossDomain: true,
+                         dataType: 'json',
+                        async: false,
+                         "headers": {
+                            "accept": "application/json",
+                             "Access-Control-Allow-Origin":"*"
+                         },
+                         success: function(result) {
+                            alert("successful modification")
+
+
+                         },
+                         error: function(jqXHR, textStatus, errorMessage) {
+                            console.log("Modify Failed")
+                            console.log(textStatus)
+                            alert("Error: Invalid input")
+                          }
+
+                      });
+
+
+
+                     });
+
+            });
+</script>
+
+
+</head>
+
+
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-tabs">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+            <!-- Page Title -->
+            <span class="mdl-layout-title">Covid Booking</span>
+        </div>
+        <!-- Tabs Layout -->
+
+        <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+            <a id = 'searchtab' href="#CustomerSearchingTab" class="mdl-layout__tab is-active">Searching</a>
+            <a  id = 'homebookingtab' href="#CustomerHomeBookingTab" class="mdl-layout__tab">HomeBooking- Book now</a>
+            <a id='ProfileTab' href="#CustomerCurrentBookingTab" class="mdl-layout__tab">Profile</a>
+        </div>
+    </header>
+    <main class="mdl-layout__content">
+        <div class="page-content">
+            <section class="mdl-layout__tab-panel is-active" id="CustomerSearchingTab">
+
+                <input id = "SearchBar" class = "searchbar" type="text" placeholder="Search..">
+                <button id = "SuburbSearch" class = "button" type="button">Submit Search</button>
+                <label class = "label" >Type Facilty </label>
+                <select class = "dropDown "name="cars" id="facilitytype">
+                    <option value="Clinic">Clinics</option>
+                    <option value="WalkIn">Walk In </option>
+                    <option value="Drive through">Drive Through</option>
+                    <option value="GPs">GPs</option>
+                    <option value="Hospital">Hospital</option>
+                </select>
+                <button id = "dropDownFacilitiy" class = "button" type="button">Submit Type Search</button>
+
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone Number</th>
+                        <th>Description</th>
+                        <th>Address</th>
+                    </tr>
+                    <tbody id="Fac">
+                    </tbody>
+
+                </table>
+
+            </section>
+        </div>
+
+        <section class="mdl-layout__tab-panel" id="CustomerHomeBookingTab">
+            <div class = "page-content">
+
+                <div class="mdl-cell mdl-cell--6-col">
+                    <b> Which Site: </b>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class = "mdl-textfield__input" type="text" id="SiteName">  </input>
+                        <label class = "mdl-textfield__label" >Site Name </label>
+                    </div>
+                    <br>
+
+
+                    <b> Bought a Kit (Yes or No): </b>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class = "mdl-textfield__input" type="text" id="KitBought">  </input>
+                        <label class = "mdl-textfield__label" >Bought a Kit? </label>
+                    </div>
+                    <br>
+                    <b> Date of Booking </b>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input type="date" id="date_input" name="trip-start">
+                    </div>
+                    <br>
+                    <b> Time of Booking </b>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+
+                        <input type="time" id="time_input" name="appt"
+                               min="09:00" max="18:00" >
+                    </div>
+                    <br>
+
+
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <button id = "Homebookingbutton" class = "buttonSub" type="button">Submit</button>
+                    </div>
+
+                    <img id = "QR" src="" class="myimgdivshowhide" width="128" height="128"/>
+                    <label id= "viewemyLabel"class ="myimgdivshowhide" class = "mdl-textfield__label"> </label>
+                </div>
+        </section>
+
+        <section class="mdl-layout__tab-panel" id="CustomerCurrentBookingTab">
+            <div class = "page-content">
+                <input id = "searchbarPin" type="text" placeholder="Enter Pin Code..">
+                <button id = "currentSubmit" class = "button" type="button">Submit</button>
+            </div>
+            <table>
+                <tr class = 'clickable-row'>
+                    <th>ID</th>
+                    <th>Given name</th>
+                    <th>Family Name</th>
+                    <th>Test Site</th>
+                    <th>Time / Date</th>
+                    <th>Test Site Status</th>
+                    <th>Delete</th>
+                    <th>Edit</th>
+                </tr>
+                <tbody id="CurrentBookingsTable">
+            </tbody>
+            </table>
+            <br>
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input type="date" id="datemodify" name="user" class = "myimgdivshowhide2">
+                <label class = "myimgdivshowhide2" class = "mdl-textfield__label" >Modify date </label>
+            </div>
+            </br>
+            <br>
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input type="time" id="timeModify" class = "myimgdivshowhide2"  name="user">
+                <label class = "myimgdivshowhide2"  class = "mdl-textfield__label" >    Modify Time</label>
+            </div>
+            </br>
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class = "myimgdivshowhide2" class = "mdl-textfield__input" type="text" id="SiteNameModify">  </input>
+                <label  class = "myimgdivshowhide2"  class = "mdl-textfield__label" >Site ID </label>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <button id = "SubmitModify" class = "myimgdivshowhide2" class = "buttonSub" type="button" >Submit Modifications</button>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <button id = "CheckPrevious" class = "myimgdivshowhide2" class = "buttonSub" type="button" >Check Previous Bookings</button>
+            </div>
+            <table  class = "myimgdivshowhide2">
+                <tr class = 'clickable-row'>
+                    <th>ID</th>
+                    <th>Given name</th>
+                    <th>Family Name</th>
+                    <th>Test Site</th>
+                    <th>Time / Date</th>
+                    <th>Re-Book</th>
+
+                </tr>
+                <tbody id="modifiedBookins">
+                </tbody>
+            </table>
+
+        </section>
+
+    </main>
+</div>
+</body>
+</html>

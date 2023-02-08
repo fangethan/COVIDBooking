@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phone Call Validation</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+               $(document).ready(function(){
+                const params = new URLSearchParams(window.location.search)
+                var givenName = params.get('userGivenName');
+                var familyName = params.get('userFamilyName');
+                var id = params.get('userid');
+
+                  $("#adminName").text("Admin Name: " + givenName + " " + familyName);
+                  $("#adminID").text("Admin ID: " + id);
+
+
+                   $.ajax({
+
+                         url:'http://localhost:8080/booking/bookingController',
+
+                         method:'GET',
+                         crossDomain: true,
+
+                         "headers": {
+                            "accept": "application/json",
+                             "Access-Control-Allow-Origin":"*"
+                         },
+                         success: function(result) {
+                                for (let i = 0; i < result.length; i++) {
+                                    $('#CurrentBookingsTable').append("<tr>\
+                                    <td>"+result[i].id+"</td>\
+								    <td>"+result[i].customer.givenName+"</td>\
+									<td>"+result[i].customer.familyName+"</td>\
+								    <td>"+result[i].notes+"</td>\
+									</tr>");
+                                }
+
+                         },
+                         error: function(jqXHR, textStatus, errorMessage) {
+                            console.log("table page failed")
+                          }
+
+                    });
+
+                $("#submitValid").click(function(){
+                    var bookingID = $("#bookingID").val().trim();
+                    var pincode = $("#pincode").val().trim();
+
+                    console.log(bookingID);
+                    console.log(pincode);
+                    if (bookingID == "" || pincode == "") {
+                        alert("fill out all text field boxes")
+                    } else {
+
+                        $.ajax({
+                            url:'http://localhost:8080/phoneBooking/book/phoneController/'+ bookingID + '/' + pincode,
+
+                            method:'GET',
+                            crossDomain: true,
+
+                            "headers": {
+                                "accept": "application/json",
+                                 "Access-Control-Allow-Origin":"*"
+                            },
+                            success: function(result) {
+                                $.ajax({
+                                    url:'http://localhost:8080/phoneBooking/phoneController/covidtest/' + bookingID + '/' + pincode,
+
+                                    method:'GET',
+                                    crossDomain: true,
+
+                                    "headers": {
+                                            "accept": "application/json",
+                                            "Access-Control-Allow-Origin":"*"
+                                    },
+                                    success: function(result) {
+                                            alert("can be modified")
+                                            window.location.href = 'adminPhoneCallModification.html?bookingID=' + bookingID
+                                            + "&pincode=" + pincode;
+                                    },
+                                    error: function(jqXHR, textStatus, errorMessage) {
+                                            console.log("booking has performed test")
+                                            console.log(textStatus)
+                                            alert("Cannot modify test, COVID Test has already been performed")
+                                   }
+                                });
+                            },
+                            error: function(jqXHR, textStatus, errorMessage) {
+                                console.log("phone call invalid input")
+                                console.log(textStatus)
+                                alert("Error: Invalid input")
+                            }
+                        });
+                    }
+                });
+
+            });
+
+    </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.css' rel='stylesheet'>
+</head>
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-tabs">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+            <!-- Page Title -->
+            <span class="mdl-layout-title">On Site Booking Modifications</span>
+        </div>
+        <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+            <a id ="main" href="./adminOnSiteBooking.html" class="mdl-layout__tab is-active">On Site Booking</a>
+            <a  id ="routetab" href="./adminOnSiteBookingModification.html" class="mdl-layout__tab">On Site Booking Modification</a>
+            <a  id ="bookDelete" href="./adminOnSiteBookingDelete.html" class="mdl-layout__tab">On Site Booking Delete</a>
+            <a  id ="phoneCall" href="./adminPhoneCallValid.html" class="mdl-layout__tab">Phone Call Modification</a>
+        </div>
+    </header>
+
+    <h1>Phone Call Validation</h1>
+
+    <div>
+        <h4 id="adminName">Admin Name: GivenName then FamilyName</h4>
+        <h4 id="adminID">Admin ID: admin id</h4>
+
+        <div id="userForm">
+            <h4>Client details</h4>
+            <label><b>Booking ID</b></label>
+            <input type="text" placeholder="Enter Booking ID" name="user" id="bookingID" required><br/>
+            <label><b>Client Pin Code</b></label>
+            <input type="text" placeholder="Enter pin code" name="user" id="pincode" required><br/>
+        </div>
+        <button id="submitValid" type="submit">Check Valid</button>
+
+        <div id="msg"></div>
+
+        <h4>Bookings</h4>
+        <table id="table" border="1">
+            <tr>
+                <th>Booking ID</th>
+                <th>Client Given Name</th>
+                <th>Client Family Name</th>
+                <th>Client Pin Code</th>
+            </tr>
+            <tbody id="CurrentBookingsTable">
+
+            </tbody>
+        </table>
+
+    </div>
+
+
+</div>
+</body>
+</html>
