@@ -1,1 +1,2 @@
-System Demonstration Video URL for Assignment 3: https://drive.google.com/file/d/1S39-e-g8Q3LH4E2hatOcRZj8nmKDBD16/view?usp=sharing
+Monash Assignment where we had to create our own covid booking site
+Implementation is springboot, java, javascript, html/css
